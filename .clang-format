@@ -1,0 +1,13 @@
+
+---
+IndentWidth: 2
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: 'false'
+BinPackArguments: 'true'
+AlignConsecutiveBitFields: 'true'
+AlignConsecutiveMacros: 'true'
+AllowShortCaseLabelsOnASingleLine: 'true'
+AllowShortEnumsOnASingleLine: 'true'
+PointerAlignment: 'Right'
+AllowShortBlocksOnASingleLine: Always
+BreakBeforeBraces: Allman
