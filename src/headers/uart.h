@@ -11,6 +11,7 @@ typedef union
     {
         uint32_t baud_clks: 23;
         uint32_t parity_settings: 3;
+        uint32_t parity_used: 1;
         uint32_t stop_bit: 1;
         uint32_t num_bits: 2;
         uint32_t disable_hw_flow_ctrl: 1;
@@ -74,5 +75,16 @@ typedef union
 
     uint32_t val;
 } uart_tx_data_t;
+
+typedef struct
+{
+    uart_setup_t setup_reg;
+    uart_fifo_t fifo_reg;
+    uart_rx_data_t rx_data_reg;
+    uart_tx_data_t tx_data_reg;
+
+} __attribute__((packed)) device_uart_t;
+
+void init_uart();
 
 #endif // __UART_H_GUARD__

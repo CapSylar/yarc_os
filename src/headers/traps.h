@@ -1,8 +1,6 @@
 #ifndef TRAPS_H_GUARD
 #define TRAPS_H_GUARD
 
-#include "master_include.h"
-
 typedef void (*irq_handler)(void);
 
 void trap_table(void) __attribute__((naked, aligned(16), used));

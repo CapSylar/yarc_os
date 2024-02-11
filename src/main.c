@@ -1,7 +1,6 @@
-#include "csr.h"
 #include "master_include.h"
-#include "uart.h"
 #include <stdint.h>
+#include <stdio.h>
 
 uint8_t num_times;
 
@@ -49,14 +48,11 @@ int main(void)
   // write_csr(CSR_MIE, mie_reg.val);
 
   // setup uart
-  uart_tx_data_t tx_reg = {.val = *UART_TX_DATA_REG};
-  tx_reg.tx_word = 'y';
-  *UART_TX_DATA_REG = tx_reg.val;
-  tx_reg.tx_word = 'a';
-  *UART_TX_DATA_REG = tx_reg.val;
-  tx_reg.tx_word = 'r';
-  *UART_TX_DATA_REG = tx_reg.val;
-  tx_reg.tx_word = 'c';
-  *UART_TX_DATA_REG = tx_reg.val;
+
+  init_console();
+  printf("hello world\n");
+
+  printf("And once again hello world\n");
+
   for (;;) {} // parking loop
 }

@@ -7,7 +7,7 @@ riscv32-unknown-elf-objdump -M numeric -M no-aliases -d -j .text.init -j .text b
 # generate 2 memory file, text and data in separate files
 
 riscv32-unknown-elf-objcopy -O binary -j .text.init -j .text build/$1 build/$1.imem
-riscv32-unknown-elf-objcopy -O binary -j .data -j .bss build/$1 build/$1.dmem
+riscv32-unknown-elf-objcopy -O binary -j .data -j .bss -j .rodata -j .stack build/$1 build/$1.dmem
 
 # convert them from binary to vmem
 
