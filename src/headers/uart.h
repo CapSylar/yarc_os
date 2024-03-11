@@ -1,5 +1,4 @@
-#ifndef __UART_H_GUARD__
-#define __UART_H_GUARD__
+#pragma once
 
 // for further reference
 // https://github.com/ZipCPU/wbuart32/blob/master/doc/spec.pdf
@@ -86,5 +85,3 @@ typedef struct
 } __attribute__((packed)) device_uart_t;
 
 void init_uart();
-
-#endif // __UART_H_GUARD__

@@ -1,6 +1,6 @@
+#include "framebuffer.h"
 #include "master_include.h"
 #include <stdint.h>
-#include <stdio.h>
 
 uint8_t num_times;
 
@@ -17,6 +17,14 @@ void handle_timer_irq()
 
 volatile uint8_t hello [10] = {};
 volatile uint8_t *vol_ptr = hello;
+
+char * hello_str =    
+"    __   __                    ______  _         _     __                         \n"
+"    \\ \\ / /                    | ___ \\| |       | |   / _|                        \n"
+"     \\ V /   __ _  _ __   ___  | |_/ /| |  __ _ | |_ | |_   ___   _ __  _ __ ___  \n"
+"      \\ /   / _` || '__| / __| |  __/ | | / _` || __||  _| / _ \\ | '__|| '_ ` _ \\ \n"
+"      | |  | (_| || |   | (__  | |    | || (_| || |_ | |  | (_) || |   | | | | | |\n"
+"      \\_/   \\__,_||_|    \\___| \\_|    |_| \\__,_| \\__||_|   \\___/ |_|   |_| |_| |_|\n";
 
 int main(void)
 {
@@ -52,7 +60,27 @@ int main(void)
   init_console();
   printf("hello world\n");
 
-  printf("And once again hello world\n");
+  // printf(hello_str);
+
+  // write to frambuffer
+  for(size_t j = 0;; ++j)
+  {
+    printf(hello_str);
+    for (size_t i = 0; i < 100000; ++i)
+    {
+      asm volatile ("nop");
+    }
+
+    for (size_t i = 0; i < FRAMEBUFFER_WORDS; ++i)
+    {
+      uint8_t red = j > 0x1000;
+      uint8_t green = j > 0x5000 & j < 0x10000;
+      uint8_t blue = j > 0x10000 & j < 0x20000;
+      device_fb->fb[i] = (red << 24) | (blue << 16) | (green << 8) | (red);
+    }
+  }
+
+  printf("done writing to fb");
 
   for (;;) {} // parking loop
 }

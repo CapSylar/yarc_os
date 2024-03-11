@@ -1,6 +1,7 @@
 #ifndef MASTER_H_GUARD
 #define MASTER_H_GUARD
 
+#include <stdint.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdint.h>
