@@ -62,25 +62,5 @@ int main(void)
 
   // printf(hello_str);
 
-  // write to frambuffer
-  for(size_t j = 0;; ++j)
-  {
-    printf(hello_str);
-    for (size_t i = 0; i < 100000; ++i)
-    {
-      asm volatile ("nop");
-    }
-
-    for (size_t i = 0; i < FRAMEBUFFER_WORDS; ++i)
-    {
-      uint8_t red = j > 0x1000;
-      uint8_t green = j > 0x5000 & j < 0x10000;
-      uint8_t blue = j > 0x10000 & j < 0x20000;
-      device_fb->fb[i] = (red << 24) | (blue << 16) | (green << 8) | (red);
-    }
-  }
-
-  printf("done writing to fb");
-
   for (;;) {} // parking loop
 }
