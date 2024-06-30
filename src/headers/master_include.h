@@ -17,3 +17,4 @@
 #include "uart_loader.h"
 #include "led.h"
 #include "utils.h"
+#include "framebuffer.h"

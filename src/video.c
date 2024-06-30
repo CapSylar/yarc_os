@@ -12,13 +12,4 @@ void init_video() {
     device_video->ctrl_reg.is_text_mode = 1;
 
     device_video->address_reg.fetch_address = 0; // w.r.t start of framebuffer
-
-    for (size_t i = 0;;) {
-      uint8_t c = console_getc();
-      fb[i++] = c;
-      printf("got %c\n", c);
-      if (i > (80  * 30)) {
-        i = 0;
-      }
-    }
 }

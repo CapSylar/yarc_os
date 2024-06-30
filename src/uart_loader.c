@@ -69,7 +69,7 @@ void uart_loader(void) {
     }
     printf("\n");
 
-    printf("jumping to address :0x%x", imem_address);
+    printf("jumping to address: 0x%x", imem_address);
     __attribute__((noreturn)) void (* goodbye)(void) = (void *) imem_address;
 
     goodbye(); // jump to loaded program

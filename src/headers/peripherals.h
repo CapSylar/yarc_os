@@ -3,6 +3,7 @@
 #include "led.h"
 #include "uart.h"
 #include "video.h"
+#include "framebuffer.h"
 
 #define PERIPH_BASE_ADDR 0xA0000000
 
@@ -36,3 +37,4 @@
 extern volatile device_uart_t* device_uart;
 extern volatile device_video_t* device_video;
 extern volatile device_led_t* device_led;
+extern volatile void *device_framebuffer;
