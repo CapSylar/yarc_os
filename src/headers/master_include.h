@@ -1,5 +1,4 @@
-#ifndef MASTER_H_GUARD
-#define MASTER_H_GUARD
+#pragma once
 
 #include <stdint.h>
 #include <stdarg.h>
@@ -14,5 +13,7 @@
 #include "uart.h"
 #include "console.h"
 #include "printf.h"
-
-#endif // MASTER_H_GUARD
+#include "video.h"
+#include "uart_loader.h"
+#include "led.h"
+#include "utils.h"

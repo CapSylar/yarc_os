@@ -16,6 +16,10 @@ set(sources
     ${SRC_DIR}/console.c
     ${PERIPH_DIR}/uart.c
     ${SRC_DIR}/printf.c
+    ${SRC_DIR}/greeting.c
+    ${SRC_DIR}/video.c
+    ${SRC_DIR}/uart_loader.c
+    ${SRC_DIR}/utils.c
 )
 
 set(LINKER_SCRIPT "link.ld")

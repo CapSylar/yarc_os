@@ -1,10 +1,13 @@
 // contains the addresses of all memory mapped peripherals
 
+#include "led.h"
 #include "uart.h"
-#include "framebuffer.h"
+#include "video.h"
+
 #define PERIPH_BASE_ADDR 0xA0000000
 
 #define UART_PERIPH_START ((PERIPH_BASE_ADDR + 0x20))
+#define VIDEO_CORE_START ((PERIPH_BASE_ADDR + 0x40))
 
 // RISCV TIMER
 #define REG_MTIME (((volatile uint32_t *) (PERIPH_BASE_ADDR + 0 * 4) ))
@@ -14,7 +17,7 @@
 #define REG_MTIMECMPH (((volatile uint32_t *) (PERIPH_BASE_ADDR + 3 * 4)))
 
 // fpga board led driver
-#define FPGA_LED_STATUS (((volatile uint32_t *) (PERIPH_BASE_ADDR + 4 * 4) ))
+#define LED_DRIVER_ADDRESS (((volatile uint32_t *) (PERIPH_BASE_ADDR + 4 * 4) ))
 
 // uart driver
 #define UART_START_ADDRESS (((volatile uint32_t *) (UART_PERIPH_START + 4 * 0)))
@@ -23,11 +26,13 @@
 #define UART_RX_DATA_REG (((volatile uint32_t *) (UART_PERIPH_START + 4 * 2)))
 #define UART_TX_DATA_REG (((volatile uint32_t *) (UART_PERIPH_START + 4 * 3)))
 
-// hdmi core and framebuffer
-// #define FB_START_ADDRESS (volatile uint32_t *)(PERIPH_BASE_ADDR + 0x100000);
+// video core
+#define VIDEO_START_ADDRESS (((volatile uint32_t *) (VIDEO_CORE_START + 4 * 0)))
+
+// ddr3 framebuffer
+#define FRAMEBUFFER_START_ADDRESS (volatile void *) (0xC0000000);
 
 // DEVICES
-
-//uart
 extern volatile device_uart_t* device_uart;
-// extern volatile device_fb_t* device_fb;
+extern volatile device_video_t* device_video;
+extern volatile device_led_t* device_led;

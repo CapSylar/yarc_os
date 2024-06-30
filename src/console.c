@@ -1,4 +1,6 @@
 #include "master_include.h"
+#include "uart.h"
+#include <stdint.h>
 
 static char print_buffer[PRINT_BUFFER_SIZE];
 
@@ -65,4 +67,21 @@ void _putchar(char character)
 {
     // send character to console (uart in our case)
     console_putchar(character);
+}
+
+uint8_t console_getc(void) {
+    uart_rx_data_t read;
+
+    do {
+        read = device_uart->rx_data_reg;
+
+        if (read.frame_error | read.parity_error |  read.rx_ff_overflow)
+        {
+            printf("error: %x\n", read);
+            yarc_exit();
+        }
+    } while(read.empty);
+
+    uint8_t read_word = read.rx_word;
+    return read_word;
 }

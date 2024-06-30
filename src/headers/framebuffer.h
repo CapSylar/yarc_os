@@ -6,5 +6,5 @@
 
 typedef union
 {
-    uint32_t fb[230400];
-} device_fb_t;
+    uint32_t buffer[230400];
+} device_framebuffer_t;

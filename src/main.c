@@ -1,6 +1,10 @@
+#include "console.h"
 #include "framebuffer.h"
 #include "master_include.h"
+#include "printf.h"
 #include <stdint.h>
+#include "greeting.h"
+#include "video.h"
 
 uint8_t num_times;
 
@@ -12,19 +16,8 @@ void handle_timer_irq()
   *REG_MTIMECMP = 0x1000;
 
   // display on the leds, the number of times this interrupt happened
-  *FPGA_LED_STATUS = ++num_times;
+  // *FPGA_LED_STATUS = ++num_times;
 }
-
-volatile uint8_t hello [10] = {};
-volatile uint8_t *vol_ptr = hello;
-
-char * hello_str =    
-"    __   __                    ______  _         _     __                         \n"
-"    \\ \\ / /                    | ___ \\| |       | |   / _|                        \n"
-"     \\ V /   __ _  _ __   ___  | |_/ /| |  __ _ | |_ | |_   ___   _ __  _ __ ___  \n"
-"      \\ /   / _` || '__| / __| |  __/ | | / _` || __||  _| / _ \\ | '__|| '_ ` _ \\ \n"
-"      | |  | (_| || |   | (__  | |    | || (_| || |_ | |  | (_) || |   | | | | | |\n"
-"      \\_/   \\__,_||_|    \\___| \\_|    |_| \\__,_| \\__||_|   \\___/ |_|   |_| |_| |_|\n";
 
 int main(void)
 {
@@ -56,11 +49,14 @@ int main(void)
   // write_csr(CSR_MIE, mie_reg.val);
 
   // setup uart
+  // init_console();
+  // print_greeting();
 
-  init_console();
-  printf("hello world\n");
+  // uart_loader();
 
-  // printf(hello_str);
+  printf("\nif this appears i'm fucking good ok\n");
+
+  init_video();
 
   for (;;) {} // parking loop
 }

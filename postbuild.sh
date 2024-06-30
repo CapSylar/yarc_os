@@ -14,5 +14,5 @@ riscv32-unknown-elf-objcopy -O binary -j .data -j .bss -j .rodata -j .stack buil
 srec_cat build/$1.imem -binary -fill 0x00 -within build/$1.imem -binary -range-padding 4 -byte-swap 4 -o build/$1.ivmem -vmem 32 -disable=header -obs=4
 srec_cat build/$1.dmem -binary -fill 0x00 -within build/$1.dmem -binary -range-padding 4 -byte-swap 4 -o build/$1.dvmem -vmem 32 -disable=header -obs=16
 # cleanup
-rm build/$1.imem
-rm build/$1.dmem
+# rm build/$1.imem
+# rm build/$1.dmem
