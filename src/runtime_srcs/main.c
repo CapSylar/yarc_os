@@ -49,12 +49,13 @@ int main(void)
   // write_csr(CSR_MIE, mie_reg.val);
 
   // setup uart
-  // init_console();
-  // print_greeting();
+  init_console();
 
-  // uart_loader();
+  volatile uint16_t *fb = device_framebuffer;
 
-  printf("\nif this appears i'm fucking good ok\n");
+  for (size_t i = 0; i < 80 * 30; ++i) {
+    fb[i] = i << 8 | i ;
+  }
 
   init_video();
 

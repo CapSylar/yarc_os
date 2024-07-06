@@ -6,8 +6,8 @@ typedef union
 {
     struct
     {
-        uint32_t is_text_mode : 1;
         uint32_t is_enabled   : 1;
+        uint32_t is_text_mode : 1;
         uint32_t unused       : 30;
     } __attribute__((packed));
 } video_core_ctrl_t;

@@ -1,15 +1,17 @@
 cmake_minimum_required(VERSION 3.12)
 project(yarc_os C ASM)
 
-set (TARGET_NAME yarc)
+set (RUNT_TARGET runtime)
+set (BOOTL_TARGET bootloader)
 
 set(CMAKE_CXX_FLAGS -Wall)
 set(SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/src)
 set(PERIPH_DIR ${SRC_DIR}/peripherals)
+set(BOOTL_DIR ${SRC_DIR}/bootloader_srcs)
+set(RUNT_DIR ${SRC_DIR}/runtime_srcs)
 
-set(sources
+set(COMMON_SRCS
     ${SRC_DIR}/crt0.S
-    ${SRC_DIR}/main.c
     ${SRC_DIR}/csr.c
     ${SRC_DIR}/traps.c
     ${SRC_DIR}/peripherals.c
@@ -22,29 +24,56 @@ set(sources
     ${SRC_DIR}/utils.c
 )
 
-set(LINKER_SCRIPT "link.ld")
+set (BOOTLOADER_SRCS
+    ${COMMON_SRCS}
+    ${BOOTL_DIR}/main.c
+)
 
-add_executable(${TARGET_NAME} ${sources})
+set (RUNTIME_SRCS
+    ${COMMON_SRCS}
+    ${RUNT_DIR}/main.c
+)
 
-set_target_properties(${TARGET_NAME} PROPERTIES
+set(RUNT_LINKER_SCRIPT "link_bootloader.ld")
+set(BOOTL_LINKER_SCRIPT "link_runtime.ld")
+
+add_executable(${BOOTL_TARGET} ${BOOTLOADER_SRCS})
+add_executable(${RUNT_TARGET} ${RUNTIME_SRCS})
+
+set_target_properties(${BOOTL_TARGET} PROPERTIES
+    C_STANDARD 11)
+set_target_properties(${RUNT_TARGET} PROPERTIES
     C_STANDARD 11)
 
-target_include_directories(${TARGET_NAME} PUBLIC ${SRC_DIR}/headers ${SRC_DIR}/printf)
+target_include_directories(${BOOTL_TARGET} PUBLIC ${SRC_DIR}/headers ${SRC_DIR}/printf)
+target_include_directories(${RUNT_TARGET} PUBLIC ${SRC_DIR}/headers ${SRC_DIR}/printf)
 
-target_compile_options(${TARGET_NAME} PRIVATE
+set (COMMON_COMPILE_OPTIONS 
                 -mstrict-align
                 -Og
                 -ggdb
                 -flto
-                -static-libgcc
-                )
+                -static-libgcc)
 
-target_link_options(${TARGET_NAME} PRIVATE
+target_compile_options(${BOOTL_TARGET} PRIVATE ${COMMON_COMPILE_OPTIONS})
+target_compile_options(${RUNT_TARGET} PRIVATE ${COMMON_COMPILE_OPTIONS})
+
+target_link_options(${BOOTL_TARGET} PRIVATE
                 -nostartfiles
                 -lgcc
-                -T ${SRC_DIR}/${LINKER_SCRIPT})
+                -T ${SRC_DIR}/${BOOTL_LINKER_SCRIPT})
 
-add_custom_command(TARGET ${TARGET_NAME}
+target_link_options(${RUNT_TARGET} PRIVATE
+                -nostartfiles
+                -lgcc
+                -T ${SRC_DIR}/${RUNT_LINKER_SCRIPT})
+
+add_custom_command(TARGET ${BOOTL_TARGET}
                     POST_BUILD
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-                    COMMAND sh postbuild.sh ${TARGET_NAME})
+                    COMMAND sh postbuild.sh ${BOOTL_TARGET})
+
+add_custom_command(TARGET ${RUNT_TARGET}
+                    POST_BUILD
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+                    COMMAND sh postbuild.sh ${RUNT_TARGET})
