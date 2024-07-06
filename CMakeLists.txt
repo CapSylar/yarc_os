@@ -34,8 +34,8 @@ set (RUNTIME_SRCS
     ${RUNT_DIR}/main.c
 )
 
-set(RUNT_LINKER_SCRIPT "link_bootloader.ld")
-set(BOOTL_LINKER_SCRIPT "link_runtime.ld")
+set(RUNT_LINKER_SCRIPT "link_runtime.ld")
+set(BOOTL_LINKER_SCRIPT "link_bootloader.ld")
 
 add_executable(${BOOTL_TARGET} ${BOOTLOADER_SRCS})
 add_executable(${RUNT_TARGET} ${RUNTIME_SRCS})
