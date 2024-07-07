@@ -31,7 +31,7 @@
 #define VIDEO_START_ADDRESS (((volatile uint32_t *) (VIDEO_CORE_START + 4 * 0)))
 
 // ddr3 framebuffer
-#define FRAMEBUFFER_START_ADDRESS (volatile void *) (0xC0000000);
+#define FRAMEBUFFER_START_ADDRESS (void *) (0xC0000000)
 
 // DEVICES
 extern volatile device_uart_t* device_uart;

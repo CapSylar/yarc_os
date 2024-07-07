@@ -22,6 +22,7 @@ set(COMMON_SRCS
     ${SRC_DIR}/video.c
     ${SRC_DIR}/uart_loader.c
     ${SRC_DIR}/utils.c
+    ${SRC_DIR}/graphic_effects.c
 )
 
 set (BOOTLOADER_SRCS

@@ -18,8 +18,6 @@ void uart_loader(void) {
     // 4 bytes: DMEM length in bytes lsbfirst
     // the DMEM content
 
-    printf("uart loader started and is waiting for incoming bytes\n\n");
-
     uint32_t imem_address = read_4_bytes();
     uint32_t imem_length = read_4_bytes();
 
@@ -40,33 +38,33 @@ void uart_loader(void) {
         *dmem_ptr++ = console_getc();
     }
 
-    printf("Written %d bytes at address %x\n", imem_length, imem_address);
-    printf("Written %d bytes at address %x\n", dmem_length, dmem_address);
+    // printf("Written %d bytes at address %x\n", imem_length, imem_address);
+    // printf("Written %d bytes at address %x\n", dmem_length, dmem_address);
 
-    printf("first 16 bytes of the loaded imem image:\n");
-    for (size_t i = 0 ;i < 16; ++i) {
-        printf("0x%02x ", imem_ptr[i]);
-    }
-    printf("\n");
+    // printf("first 16 bytes of the loaded imem image:\n");
+    // for (size_t i = 0 ;i < 16; ++i) {
+    //     printf("0x%02x ", imem_ptr[i]);
+    // }
+    // printf("\n");
 
-    printf("last 16 bytes of the loaded imem image: \n");
+    // printf("last 16 bytes of the loaded imem image: \n");
 
-    for (size_t i = imem_length - 16; i < imem_length; ++i) {
-        printf("0x%02x ", imem_ptr[i]);
-    }
-    printf("\n");
+    // for (size_t i = imem_length - 16; i < imem_length; ++i) {
+    //     printf("0x%02x ", imem_ptr[i]);
+    // }
+    // printf("\n");
 
-    printf("first 16 bytes of the loaded dmem image:\n");
-    for (size_t i = 0 ;i < 16; ++i) {
-        printf("0x%02x ", dmem_ptr[i]);
-    }
-    printf("\n");
+    // printf("first 16 bytes of the loaded dmem image:\n");
+    // for (size_t i = 0 ;i < 16; ++i) {
+    //     printf("0x%02x ", dmem_ptr[i]);
+    // }
+    // printf("\n");
 
-    printf("last 16 bytes of the loaded dmem image: \n");
+    // printf("last 16 bytes of the loaded dmem image: \n");
 
-    for (size_t i = dmem_length - 16; i < dmem_length; ++i) {
-        printf("0x%02x ", dmem_ptr[i]);
-    }
+    // for (size_t i = dmem_length - 16; i < dmem_length; ++i) {
+    //     printf("0x%02x ", dmem_ptr[i]);
+    // }
     printf("\n");
 
     printf("jumping to address: 0x%x", imem_address);

@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include "greeting.h"
 #include "video.h"
+#include "graphic_effects.h"
 
 uint8_t num_times;
 
@@ -51,13 +52,40 @@ int main(void)
   // setup uart
   init_console();
 
-  volatile uint16_t *fb = device_framebuffer;
+  video_dev_t video_device;
+  init_video(&video_device);
 
-  for (size_t i = 0; i < 80 * 30; ++i) {
-    fb[i] = i << 8 | i ;
+  void *fb_address = FRAMEBUFFER_START_ADDRESS;
+
+  video_device_set_mode(&video_device, VIDEO_RAW_MODE);
+  video_device_set_fb_address(&video_device, fb_address);
+  raw_mode_clear_screen(&video_device);
+
+  video_device_set_fb_address(&video_device, fb_address + RAW_MODE_FRAME_SIZE_BYTES);
+  raw_mode_clear_screen(&video_device);
+  
+  // switch back to first framebuffer
+  video_device_set_fb_address(&video_device, fb_address);
+
+  volatile uint8_t *fb = video_device.fb_address;
+
+  draw_checker_pattern(fb, 16, false);
+  draw_checker_pattern(fb + RAW_MODE_FRAME_SIZE_BYTES, 16, true);
+
+  video_device_set_enable(&video_device, true);
+
+  int current_fb = 0;
+
+  for (;;) {
+
+    for (size_t i = 0; i < 10000000; ++i) {
+      asm volatile ("nop");
+    }
+
+    current_fb = (current_fb + 1) % 2;
+    volatile uint32_t *fb = FRAMEBUFFER_START_ADDRESS + current_fb * RAW_MODE_FRAME_SIZE_BYTES;
+    video_device_set_fb_address(&video_device, (void *) fb);
   }
-
-  init_video();
 
   for (;;) {} // parking loop
 }
