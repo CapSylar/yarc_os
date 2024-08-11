@@ -38,8 +38,8 @@ void uart_loader(void) {
         *dmem_ptr++ = console_getc();
     }
 
-    // printf("Written %d bytes at address %x\n", imem_length, imem_address);
-    // printf("Written %d bytes at address %x\n", dmem_length, dmem_address);
+    printf("Loaded %d bytes at address %x\n", imem_length, imem_address);
+    printf("Loaded %d bytes at address %x\n", dmem_length, dmem_address);
 
     // printf("first 16 bytes of the loaded imem image:\n");
     // for (size_t i = 0 ;i < 16; ++i) {
@@ -64,10 +64,8 @@ void uart_loader(void) {
 
     // for (size_t i = dmem_length - 16; i < dmem_length; ++i) {
     //     printf("0x%02x ", dmem_ptr[i]);
-    // }
-    printf("\n");
 
-    printf("jumping to address: 0x%x", imem_address);
+    printf("jumping to address: 0x%x\n", imem_address);
     __attribute__((noreturn)) void (* goodbye)(void) = (void *) imem_address;
 
     goodbye(); // jump to loaded program
