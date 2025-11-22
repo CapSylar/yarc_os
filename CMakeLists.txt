@@ -4,6 +4,11 @@ project(yarc_os C ASM)
 set (RUNT_TARGET runtime)
 set (BOOTL_TARGET bootloader)
 
+set(ARCH_FLAGS "-march=rv32i_zicsr -mabi=ilp32")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ARCH_FLAGS}")
+set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${ARCH_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${ARCH_FLAGS}")
+
 set(CMAKE_CXX_FLAGS -Wall)
 set(SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/src)
 set(PERIPH_DIR ${SRC_DIR}/peripherals)
