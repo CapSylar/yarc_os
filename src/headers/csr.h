@@ -457,15 +457,15 @@ typedef union
     // 0->2
     uint32_t unused0 : 3;
     // 3
-    uint32_t msip : 1;
+    uint32_t msie : 1;
     // 4->6
     uint32_t unused1 : 3;
     // 7
-    uint32_t mtip : 1;
+    uint32_t mtie : 1;
     // 8->10
     uint32_t unused2 : 3;
     // 11
-    uint32_t meip : 1;
+    uint32_t meie : 1;
     // 12->31
     uint32_t unused3 : 20;
   } __attribute__((packed));

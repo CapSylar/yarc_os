@@ -1,0 +1,100 @@
+/dts-v1/;
+
+/ {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	model = "YARC RV32";
+	compatible = "rv32";
+	
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		timebase-frequency = <80000000>;// 80MHz
+		
+		cpu0: cpu@0 {
+			device_type = "cpu";
+			reg = <0>;
+			status = "okay";
+			compatible = "riscv";
+			riscv,isa = "rv32ima";
+			mmu-type = "riscv,none";// Claim you have an MMU (even if you don't yet)
+			opensbi-domain = <&tdomain>;
+			
+			// Interrupt Controller (CPU Local)
+			cpu0_intc: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+	};
+	
+	soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "simple-bus";
+		ranges;
+		
+		// 1. The CLINT
+		clint0: clint@a0000000 {
+			compatible = "riscv,clint0";
+			interrupts-extended = <&cpu0_intc 3 &cpu0_intc 7>;// Software(3) & Timer(7)
+			reg = <0xA0000000 0x10000>;
+		};
+		
+		// 2. The UART
+		uart0: serial@a1000000 {
+			compatible = "ns16550a";
+			reg = <0xA1000000 0x20>;
+			reg-shift = <2>;// Registers are 4-bytes apart
+			clock-frequency = <80000000>;
+			current-speed = <500000>;
+			interrupt-parent = <&cpu0_intc>;
+			interrupts = <11>;// External Interrupt (11)
+		};
+	};
+	
+	// 3. Main Memory (RAM)
+	memory@C0000000 {
+		device_type = "memory";
+		reg = <0xC0000000 0x20000000>;// 512 MB
+	};
+	
+	chosen {
+		stdout-path = "&uart0";
+		
+		opensbi-domains {
+			compatible = "opensbi,domain,config";
+			
+			domain_mmio: mmio-region {
+				compatible = "opensbi,domain,memregion";
+				base = <0x0 0xA0000000>;
+				order = <26>;
+				mmode = <0x7>;
+				umode = <0x7>;
+				device-type = "io";
+			};
+			
+			domain_mem: mem-region {
+				compatible = "opensbi,domain,memregion";
+				base = <0x0 0xC0000000>;
+				order = <29>;// 2^29 = 512MB
+				// Permissions: M-mode RWX (7), S/U mode RWX (7)
+				mmode = <0x7>;
+				umode = <0x7>;
+			};
+			
+			tdomain: trusted-domain {
+				compatible = "opensbi,domain,instance";
+				possible-harts = <&cpu0>;
+				regions = <&domain_mem &domain_mmio>;
+				boot-hart = <&cpu0>;
+				next-arg1 = <0x0 0x0>;
+				next-addr = <0x0 0xC0200000>;
+				next-mode = <0x0>;
+				system-reset-allowed;
+				system-suspend-allowed;
+			};
+		};
+	};
+};

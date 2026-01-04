@@ -1,9 +1,9 @@
-#include "uart.h"
+#include "wb32_uart.h"
 #include "master_include.h"
 #include "platform.h"
 
 // need to call this before interracting with the uart module
-void init_uart()
+void init_wb32_uart(void)
 {
   // write the uart config reg
   uart_setup_t uart_setup_reg = {.baud_clks = (MAIN_CLK_FREQ / UART_BAUD_RATE),

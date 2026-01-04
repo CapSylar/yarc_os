@@ -4,7 +4,7 @@ project(yarc_os C ASM)
 set (RUNT_TARGET runtime)
 set (BOOTL_TARGET bootloader)
 
-set(ARCH_FLAGS "-march=rv32i_zicsr -mabi=ilp32")
+set(ARCH_FLAGS "-march=rv32ima_zicsr_zifencei -mabi=ilp32")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ARCH_FLAGS}")
 set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${ARCH_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${ARCH_FLAGS}")
@@ -21,7 +21,8 @@ set(COMMON_SRCS
     ${SRC_DIR}/traps.c
     ${SRC_DIR}/peripherals.c
     ${SRC_DIR}/console.c
-    ${PERIPH_DIR}/uart.c
+    ${PERIPH_DIR}/wb32_uart.c
+    ${PERIPH_DIR}/uart_16550.c
     ${SRC_DIR}/printf.c
     ${SRC_DIR}/greeting.c
     ${SRC_DIR}/video.c

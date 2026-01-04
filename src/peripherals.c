@@ -3,8 +3,8 @@
 #include "uart.h"
 #include "led.h"
 
-volatile device_uart_t *device_uart =
-    (volatile device_uart_t *)UART_START_ADDRESS;
+// volatile device_uart_t *device_uart =
+//     (volatile device_uart_t *)UART_START_ADDRESS;
 
 volatile device_video_t *device_video =
     (volatile device_video_t *)VIDEO_START_ADDRESS;

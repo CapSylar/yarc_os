@@ -19,7 +19,10 @@ void trap_table(void)
 
 void exception_handler(void) {}
 
-void software_handler(void) {}
+void software_handler(void) {
+  if (irq_handlers[SOFTWARE_IRQ_INT])
+    irq_handlers[SOFTWARE_IRQ_INT]();
+}
 
 void timer_handler(void)
 {
@@ -27,7 +30,10 @@ void timer_handler(void)
     irq_handlers[TIMER_IRQ_INT]();
 }
 
-void external_handler(void) {}
+void external_handler(void) {
+  if (irq_handlers[EXTERNAL_IRQ_INT])
+    irq_handlers[EXTERNAL_IRQ_INT]();
+}
 
 void register_irq_handler(uint32_t interrupt_num, irq_handler handler)
 {

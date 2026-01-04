@@ -9,11 +9,13 @@
 #include "greeting.h"
 #include "video.h"
 #include "graphic_effects.h"
+#include "clint.h"
 
 uint8_t num_times;
 
-void handle_timer_irq()
-{
+void handle_timer_irq(void) {
+  printf("\nyellow\n");
+
   *REG_MTIMEH = 0x0;
   *REG_MTIME = 0x0;
   *REG_MTIMECMPH = 0x0;
@@ -21,6 +23,13 @@ void handle_timer_irq()
 
   // display on the leds, the number of times this interrupt happened
   // *FPGA_LED_STATUS = ++num_times;
+}
+
+void handle_software_irq(void) {
+
+  *REG_MSIP = 0;
+  printf("got software interrupt\n");
+  for (;;) {}
 }
 
 int main(void)
@@ -31,12 +40,13 @@ int main(void)
   // uint64_t instret_before = (uint64_t) read_csr(CSR_MINSTRETH) << 32 | read_csr(CSR_MINSTRET);
 
   // // disable interrupts
-  // write_csr(CSR_MIE, 0);
+  write_csr(CSR_MIE, 0);
 
   // // set up mtvec and trap table
-  // write_csr(CSR_MTVEC, ((uint32_t)trap_table) | 0x1); // vectored mode
+  write_csr(CSR_MTVEC, ((uint32_t)trap_table) | 0x1); // vectored mode
 
-  // register_irq_handler(TIMER_IRQ_INT, handle_timer_irq);
+  register_irq_handler(TIMER_IRQ_INT, handle_timer_irq);
+  register_irq_handler(SOFTWARE_IRQ_INT, handle_software_irq);
   // small test sequence for mtimer
 
   // clear the fpga leds
@@ -47,79 +57,88 @@ int main(void)
   // *REG_MTIMECMPH = 0x0;
   // *REG_MTIMECMP = 0x1000;
 
-  // // enable interrupts
+  // enable interrupts
   // csr_mstatus_t mstatus_reg = {.val = read_csr(CSR_MSTATUS)};
-  // // in mstatus
+  // in mstatus
   // mstatus_reg.mie = 1;
   // write_csr(CSR_MSTATUS, mstatus_reg.val);
 
-  // // enable interrupts in mie
-  // csr_mie_t mie_reg = {.mtip = 1};
+  // enable interrupts in mie
+  // csr_mie_t mie_reg = {.mtie = 1, .msie = 1};
   // write_csr(CSR_MIE, mie_reg.val);
 
   // setup uart
-  init_console();
+  // init_console();
 
-  // for (size_t i = 0; i < 1; ++i) {
-    printf("hello, world\n");
+  // for (size_t i = 0; i < 10; ++i) {
+  //   printf("hello, world\n");
   // }
 
-  // volatile uint32_t *fb = FRAMEBUFFER_START_ADDRESS + 0x20000;
+  volatile uint32_t *fb = FRAMEBUFFER_START_ADDRESS + 0x800000;
 
-  // for (size_t i = 0 ; i < 0x800; ++i) {
+  // for (size_t i = 0; i < 0x10; ++i) {
   //   fb[i];
   // }
 
-  // for (size_t i = 0; i < 0x800; ++i) {
-  //   fb[i] = i;
-  // }
+  const size_t rw_size = 0x10000;
 
-  // for (size_t i = 0 ; i < 0x800; ++i) {
-  //   if (fb[i] != i) {
-  //     printf("error data %d\n", i);
-  //   } else {
-  //     printf("success at data %d\n", i);
-  //   }
-  // }
+  for (size_t i = 0; i < rw_size; ++i) {
+    fb[i] = i;
+  }
 
-  video_dev_t video_device;
-  init_video(&video_device);
+  bool error = false;
 
-  void *fb_address = FRAMEBUFFER_START_ADDRESS;
+  for (size_t i = 0 ; i < rw_size; ++i) {
+    uint32_t read = fb[i];
+    if (read != i) {
+      printf("error data %d, read %x, expected %x\n", i, read, i);
+      error = true;
+      break;
+    }
+  }
 
-  video_device_set_mode(&video_device, VIDEO_TEXT_MODE);
-  video_device_set_fb_address(&video_device, fb_address);
-  text_mode_clear_screen(&video_device);
-  // raw_mode_clear_screen(&video_device);
+  if (!error) {
+    printf("test ok wrote 1MB\n");
+  } else {
+    printf("we fucked\n");
+  }
 
-  // video_device_set_fb_address(&video_device, fb_address + RAW_MODE_FRAME_SIZE_BYTES);
-  // raw_mode_clear_screen(&video_device);
-  
-  // // switch back to first framebuffer
+  // video_dev_t video_device;
+  // init_video(&video_device);
+
+  // void *fb_address = FRAMEBUFFER_START_ADDRESS;
+
+  // video_device_set_mode(&video_device, VIDEO_TEXT_MODE);
   // video_device_set_fb_address(&video_device, fb_address);
+  // text_mode_clear_screen(&video_device);
+  // // raw_mode_clear_screen(&video_device);
 
-  // volatile uint8_t *fb = video_device.fb_address;
+  // // video_device_set_fb_address(&video_device, fb_address + RAW_MODE_FRAME_SIZE_BYTES);
+  // // raw_mode_clear_screen(&video_device);
+  
+  // // // switch back to first framebuffer
+  // // video_device_set_fb_address(&video_device, fb_address);
 
-  // draw_checker_pattern(fb, 16, false);
-  // draw_checker_pattern(fb + RAW_MODE_FRAME_SIZE_BYTES, 16, true);
+  // // volatile uint8_t *fb = video_device.fb_address;
 
-  video_device_set_enable(&video_device, true);
+  // // draw_checker_pattern(fb, 16, false);
+  // // draw_checker_pattern(fb + RAW_MODE_FRAME_SIZE_BYTES, 16, true);
 
-  volatile uint16_t *fb = (void *) fb_address;
+  // video_device_set_enable(&video_device, true);
 
-  char *str = "hello, world                        ";
+  // volatile uint16_t *fb = (void *) fb_address;
 
-  for (int i = 0; i < strlen(str); ++i) {
-    printf("char at %c\n", str[i]);
-  }
+  // char *str = "joe karaa batchas";
 
-  for (int i = 0; i < strlen(str); ++i) {
-    text_mode_char_t video_char = {.code_point = str[i], .blink = 0, .bg_color = 0, .fg_color = 2};
-    fb[i] = video_char.val;
-    printf("wrote\n");
-  }
+  // // for (int i = 0; i < strlen(str); ++i) {
+  // //   printf("char at %c\n", str[i]);
+  // // }
 
-
+  // for (int i = 0; i < strlen(str); ++i) {
+  //   text_mode_char_t video_char = {.code_point = str[i], .blink = 1, .bg_color = 0, .fg_color = 2};
+  //   fb[i] = video_char.val;
+  //   // printf("wrote\n");
+  // }
 
   // int current_fb = 0;
 

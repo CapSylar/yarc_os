@@ -10,11 +10,18 @@ int main(void)
   // set up mtvec and trap table
   write_csr(CSR_MTVEC, ((uint32_t)trap_table) | 0x1); // vectored mode
 
+  // keep blocking until DDR3 memory is ready;
+  volatile uint8_t *ptr = FRAMEBUFFER_START_ADDRESS;
+  *ptr;
+  
   // setup uart
-  init_console();
+  // init_console();
 
-  print_greeting();
-  uart_loader();
+  // print_greeting();
+  // uart_loader();
 
-  for (;;) {} // parking loop
+  // for (;;) {} // parking loop
+
+  __attribute__((noreturn)) void (* goodbye)(void) = (void *) FRAMEBUFFER_START_ADDRESS;
+  goodbye();
 }

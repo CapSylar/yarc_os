@@ -16,7 +16,7 @@ void init_console()
     init_q();
 
     // init uart
-    init_uart();
+    init_uart_16550();
 }
 
 void console_putchar(char c)
@@ -26,8 +26,16 @@ void console_putchar(char c)
     // if (size_q >= PLATFORM_UART_BUFFER_SIZE) {
 
     // }
-    while (!(device_uart->fifo_reg.tx_one)) {}
-    device_uart->tx_data_reg.tx_word = c;
+    // while (!(device_uart->fifo_reg.tx_one)) {}
+    // device_uart->tx_data_reg.tx_word = c;
+
+    uart_16550_lsr_t reg;
+
+    do {
+       reg = (uart_16550_lsr_t) {.val = *UART_16550_LS};
+    } while(!reg.txff_empty);
+
+    *UART_16550_TXH = c;
 }
 
 static size_t head_i, tail_i;
@@ -70,18 +78,25 @@ void _putchar(char character)
 }
 
 uint8_t console_getc(void) {
-    uart_rx_data_t read;
+    // uart_rx_data_t read;
+
+    // do {
+    //     read = device_uart->rx_data_reg;
+
+    //     if (read.frame_error | read.parity_error |  read.rx_ff_overflow)
+    //     {
+    //         printf("error: %x\n", read);
+    //         yarc_exit();
+    //     }
+    // } while(read.empty);
+
+    // uint8_t read_word = read.rx_word;
+
+    uart_16550_lsr_t reg;
 
     do {
-        read = device_uart->rx_data_reg;
+       reg = (uart_16550_lsr_t) {.val = *UART_16550_LS};
+    } while(!reg.data_ready);
 
-        if (read.frame_error | read.parity_error |  read.rx_ff_overflow)
-        {
-            printf("error: %x\n", read);
-            yarc_exit();
-        }
-    } while(read.empty);
-
-    uint8_t read_word = read.rx_word;
-    return read_word;
+    return *UART_16550_RCV;
 }
